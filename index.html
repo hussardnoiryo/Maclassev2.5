@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Ma classe" />
+<meta name="theme-color" content="#ffffff" />
+<title>Ma classe CE1</title>
+<style>
+:root{--bg:#e6ebf3;--card:#fff;--text:#33304a;--muted:#7a7491;--line:#d6dce8;--blue:#3b5bdb;--blue-l:#e9edff;--g:#2f9e6b;--gl:#e3f5ec;--o:#d98a1c;--ol:#fff3df;--r:#d64545;--rl:#fde8e8;font-family:Inter,"Segoe UI",system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);min-height:100dvh;padding-bottom:calc(70px + env(safe-area-inset-bottom))}
+button,input,select,textarea{font:inherit;font-size:16px;color:inherit;touch-action:manipulation}
+html{-webkit-text-size-adjust:100%}
+body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+#nav{position:sticky;top:0;z-index:10;display:flex;gap:6px;background:var(--card);padding:8px 10px;padding-top:max(8px,env(safe-area-inset-top));border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(60,70,100,.08);overflow-x:auto}
+#nav button{flex:1 0 auto;border:2px solid transparent;border-radius:13px;background:#f1f4f9;color:var(--muted);font-weight:700;padding:9px 6px;cursor:pointer;line-height:1.15;white-space:nowrap}
+#nav button.on{background:var(--blue-l);color:#2a45b0;border-color:var(--blue)}
+#sync{flex:none;align-self:center;font-size:.75rem;color:var(--muted);padding:0 6px;white-space:nowrap}
+#sync.err{color:var(--r);font-weight:700}
+main{max-width:980px;margin:0 auto;padding:12px}
+.card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(60,70,100,.08)}
+h2{font-size:1.15rem;margin-bottom:8px}h3{font-size:1rem;margin:4px 0 8px}
+.muted{color:var(--muted);font-size:.85rem}
+.btn{border:1px solid var(--line);background:#f1f4f9;border-radius:11px;padding:9px 14px;font-weight:700;cursor:pointer}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.dan{background:var(--rl);border-color:#f2b9b9;color:#a12b2b}
+.btn.sm{padding:5px 10px;font-size:.85rem}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sp{flex:1}
+input[type=text],input[type=number],input[type=date],input[type=url],input[type=password],select,textarea{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff;min-width:0}
+textarea{width:100%;min-height:90px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px}
+.chip{flex:none;border:2px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-weight:700;cursor:pointer}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:10px}
+.tile{position:relative;border:2px solid var(--line);background:#fff;border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;min-height:110px}
+.tile:active{transform:scale(.97)}
+.tile .n{display:block;font-size:2.2rem;font-weight:800;color:var(--blue)}
+.tile .two{display:flex;justify-content:center;gap:14px;margin-top:6px}.tile .two span{display:flex;flex-direction:column;align-items:center;min-width:56px}
+.tile .two b{font-size:2rem;line-height:1.1;color:var(--blue)}.tile .two span+span b{color:#555}.tile .two em{font-style:normal;font-size:.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.tile .st{display:inline-block;margin:4px 0 0;padding:1px 10px;border-radius:999px;font-weight:800;font-size:.85rem;background:#e3f5ec;color:#1d7a50}.tile.lent .st{background:#ffe6c2;color:#9a5d00}
+.tile.lent .n{font-size:2.2rem;padding:0;color:var(--blue)}
+.tile .t{display:block;font-weight:700;overflow-wrap:break-word;padding:0 38px}.tile .c{display:block;font-size:.75rem;color:var(--muted);margin-top:2px}
+.tile .mn{position:absolute;top:4px;right:4px;border:1px solid var(--line);background:#f1f4f9;border-radius:10px;width:38px;height:38px;font-size:1.3rem;font-weight:800;cursor:pointer}
+.tile.lent{background:var(--ol);border-color:var(--o)}.tile.lent .n{color:var(--o);font-size:1.3rem;padding:8px 0}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{border-bottom:1px solid #edf0f6;padding:6px 6px;text-align:center}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:#fff}
+th{font-size:.78rem;color:var(--muted);vertical-align:bottom}
+.scroll{overflow-x:auto}
+.pill{display:inline-block;min-width:58px;padding:3px 8px;border-radius:999px;font-weight:700;font-size:.85rem;background:#eef0f5;color:var(--muted)}
+.pill.g{background:var(--gl);color:#1d7a50}.pill.o{background:var(--ol);color:#9a5d00}.pill.r{background:var(--rl);color:#a12b2b}
+.bar{height:9px;border-radius:6px;background:#eef0f5;overflow:hidden;position:relative;flex:1;min-width:60px}
+.bar i{display:block;height:100%;border-radius:6px}
+.bar i.g{background:var(--g)}.bar i.o{background:var(--o)}.bar i.r{background:var(--r)}
+.lines>div{display:flex;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid #f0f2f7}
+.lines .l{flex:0 0 40%;font-weight:600;word-break:break-word}.lines .sub .l{padding-left:14px;font-weight:500}
+.lines .cl{flex:none;font-size:.78rem;color:var(--muted);width:78px;text-align:right}
+.auto{font-size:.72rem;background:var(--blue-l);color:#2a45b0;border-radius:6px;padding:1px 6px;margin-left:4px}
+.synth li{margin:5px 0 5px 18px}
+.fl{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bil{font-size:15px;color:#222}.bil h1{font-size:1.9em}.bil small{color:#777;font-weight:500}
+.bhead{display:flex;justify-content:space-between;align-items:baseline;border-bottom:3px solid #3b5bdb;padding-bottom:5px;margin-bottom:14px}.bhead span{color:#666;font-size:.9em}
+.bhero{display:flex;gap:16px;align-items:center;margin-bottom:14px}.bring{width:7.5em;height:7.5em;flex:none}
+.bhl{font-size:1.1em;display:flex;gap:8px;align-items:center}.bhs{color:#555;margin-top:4px}
+.bp{display:inline-block;min-width:3.6em;text-align:center;padding:.12em .65em;border-radius:999px;font-weight:700;background:#eef0f5;color:#666;white-space:nowrap}
+.bp.g{background:#e3f5ec;color:#1d7a50}.bp.o{background:#fdf0dc;color:#a8650c}.bp.r{background:#fde4e4;color:#b02a2a}
+.bgrid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:12px}.bgrid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px}
+.bbox,.bcard{border:2px solid #cfd5e3;border-radius:12px;padding:10px 12px;min-width:0}
+.bbox h5{font-size:1.05em;margin-bottom:6px;display:flex;align-items:center;gap:6px}.bbox h5 .bn{margin-left:auto;background:#e6ecff;border-radius:999px;padding:0 .7em;font-size:.95em}
+.burow{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid #eef0f6}.burow:last-of-type{border:0}.bmuted{color:#777;font-size:.85em}
+.bch{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:1.05em}
+.brow{display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid #eef0f6}.bl{flex:0 0 36%;font-weight:700;min-width:0;overflow-wrap:break-word;word-break:normal;hyphens:auto}
+.bbar{flex:1;height:.7em;background:#e9ebf3;border-radius:6px;position:relative;min-width:30px}.bbar i{display:block;height:100%;border-radius:6px}
+.bbar i.g{background:#3d8f5f}.bbar i.o{background:#c9822a}.bbar i.r{background:#c0392b}.bbar u{position:absolute;top:-3px;bottom:-3px;width:2.5px;background:#444;text-decoration:none}
+.bc{flex:none;color:#666;font-size:.76em;min-width:3.8em;text-align:right}
+.bspan2{grid-column:span 2}.bspan2 .bcols{column-count:2;column-gap:22px}.bcols .brow{break-inside:avoid}
+@media(max-width:560px){.bspan2{grid-column:auto}.bspan2 .bcols{column-count:1}}
+.dt{border-top:1px solid #eef0f6}.dt>summary{display:flex;align-items:center;gap:8px;padding:9px 4px;cursor:pointer;list-style:none}.dt>summary::-webkit-details-marker{display:none}
+.dt>summary::before{content:"▸";color:var(--muted);transition:transform .15s}.dt[open]>summary::before{transform:rotate(90deg)}
+.dt>summary .sl{flex:1;font-weight:700}.dt>summary.ds .sl{font-size:1.05rem}.dsub{margin-left:18px}.dsub>summary .sl{font-weight:600}
+.dev{display:flex;align-items:center;gap:8px;padding:6px 4px 6px 30px;border-top:1px dashed #eef0f6;font-size:.9rem;flex-wrap:wrap}.dev .dd{color:var(--muted);flex:0 0 5.6em;font-size:.82rem}.dev .dn{flex:1;min-width:8em}.dev .dm{font-weight:700;white-space:nowrap}
+.bcur{flex:none;width:100%;height:.8em;margin-top:8px}
+.bfoot{color:#666;font-size:.78em;border-top:1px solid #ddd;padding-top:6px;margin-top:6px}
+@media(max-width:700px){.bil{font-size:14px}}
+@media(max-width:560px){.tiles{grid-template-columns:repeat(2,1fr)}.chip{padding:10px 14px}.btn{padding:11px 14px}.fl{grid-template-columns:1fr}#nav button{font-size:.85rem;padding:8px 12px}}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2a2840;color:#fff;padding:10px 20px;border-radius:999px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:99;max-width:90vw;text-align:center}
+#toast.on{opacity:1}
+#modal{position:fixed;inset:0;background:rgba(30,28,50,.55);display:none;align-items:center;justify-content:center;z-index:80;padding:12px}
+#modal.on{display:flex}#mbox{background:#fff;border-radius:16px;max-width:560px;width:100%;max-height:90dvh;overflow:auto;padding:18px}
+details summary{cursor:pointer;font-weight:700;padding:6px 0}
+pre.sql{background:#1e1e2e;color:#d6e0ff;border-radius:10px;padding:10px;font-size:.72rem;overflow:auto;max-height:320px;white-space:pre}
+#sheet{display:none}
+@media print{
+  @page{size:A4;margin:8mm}
+  body{background:#fff;padding:0}body>*:not(#sheet){display:none!important}
+  #sheet{display:block}
+}
+#sheetIn{width:194mm;color:#222;font-size:10.5px;line-height:1.3}
+#sheetIn .bil{font-size:11px}
+#sheetIn h1{font-size:19px;margin-bottom:2px}#sheetIn h4{font-size:11.5px;margin:9px 0 4px;border-bottom:1.5px solid #3b5bdb;padding-bottom:2px;color:#2a45b0}
+#sheetIn .ln{display:flex;gap:6px;align-items:center;padding:2px 0}
+#sheetIn .ln .l{flex:0 0 38%}#sheetIn .ln.sub .l{padding-left:12px;color:#444}
+#sheetIn .ln .bar{height:7px}#sheetIn .ln .v{flex:0 0 52px;text-align:right;font-weight:700}#sheetIn .ln .cl{flex:0 0 62px;text-align:right;color:#777;font-size:9.5px}
+#sheetIn table{font-size:9.5px}#sheetIn th,#sheetIn td{padding:2px 3px}
+#sheetIn ul{margin-left:16px}
+.ppage{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto repeat(3,minmax(0,1fr));gap:4mm;height:268mm;page-break-after:always;break-after:page}
+.ppage:last-child{page-break-after:auto;break-after:auto}
+.ppage .ph{grid-column:1/3;text-align:center}.ppage .ph b{font-size:15px}
+.pcard{border:1px solid #999;border-radius:8px;padding:7px 9px;display:flex;flex-direction:column;overflow:hidden;font-size:11px}
+.pcard .pn{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #ccc;padding-bottom:3px;margin-bottom:5px}
+.pcard .pn b{font-size:1.3em}.pcard .pn i{font-size:.8em;color:#777}
+.pcard .pl{display:flex;gap:4px;align-items:baseline;padding:1.5px 0}.pcard .pl span.d{flex:1;border-bottom:1px dotted #aaa;transform:translateY(-3px)}
+.pcard .pm{margin-top:7px;font-size:.88em;display:flex;justify-content:space-between;gap:8px;align-items:flex-end;padding-top:5px}
+.pcard .sg{white-space:nowrap;font-style:italic;color:#555}.pcard .sg u{display:inline-block;width:26mm;text-decoration:none;border-bottom:1px solid #777}
+</style>
+</head>
+<body>
+<div id="nav"></div>
+<main id="main"></main>
+<div id="toast"></div>
+<div id="modal"><div id="mbox"></div></div>
+<div id="sheet"><div id="sheetIn"></div></div>
+
+<script>
+/* =====================================================================
+   Ma classe CE1 — appli unique. Un seul jeu de données (S), un seul CSV,
+   une seule synchro Supabase. Rien n'est jamais écrasé sans confirmation.
+   ===================================================================== */
+const LS_KEY = "classe-ce1-v2", LS_CFG = "classe-ce1-v2-cloud", LS_PAGE = "classe-ce1-v2-page";
+const MODS = { sons: "Sons", ecriture: "Écriture", vie: "Vie de classe", matos: "Matériel" };
+const $ = s => document.querySelector(s);
+const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-3);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const today = () => new Date().toISOString().slice(0, 10);
+const frDate = d => { const m = String(d).match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? `${m[3]}/${m[2]}/${m[1]}` : d; };
+const fmt = n => (Math.round(n * 10) / 10).toString().replace(".", ",");
+const norm = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+const mean = a => { a = a.filter(v => typeof v === "number" && !isNaN(v)); return a.length ? a.reduce((x, y) => x + y, 0) / a.length : null; };
+const byName = (a, b) => a.name.localeCompare(b.name, "fr", { sensitivity: "base" });
+const isDetail = name => /fran[cç]ais|math/i.test(name);
+const isDetailCols = name => /fran[cç]ais|math|emc/i.test(name);   // colonnes du bilan Notes (EMC garde ses sous-matières automatiques)
+
+/* ---------- Données ---------- */
+function defaults() {
+  const sub = n => ({ id: uid(), name: n });
+  return {
+    v: 2, updatedAt: null,
+    students: [],
+    subjects: [
+      { id: uid(), name: "Français", subs: ["Lecture", "Écriture", "Orthographe", "Grammaire", "Vocabulaire"].map(sub) },
+      { id: uid(), name: "Mathématiques", subs: ["Nombres", "Calcul", "Géométrie", "Grandeurs et mesures"].map(sub) },
+      { id: uid(), name: "EMC", subs: ["Respect des consignes", "Respect des règles de vie"].map(sub) },
+      { id: uid(), name: "Questionner le monde", subs: [] },
+      { id: uid(), name: "Anglais", subs: [] },
+      { id: uid(), name: "EPS", subs: [] },
+      { id: uid(), name: "Arts", subs: [] }
+    ],
+    items: {
+      sons: [], ecriture: [], matos: [],
+      vie: [{ id: uid(), name: "Respect des consignes", emc: "consignes", w: 1 }, { id: uid(), name: "Respect des règles de vie", emc: "regles", w: 1 }]
+    },
+    counts: {},   // counts[élève][module][item] = cette semaine
+    term: {},     // cumul des semaines précédentes (même forme)
+    lent: {},     // lent["élève::item"] = true
+    evals: []     // {id,date,subjectId,subId,label,max,grades{élève:note}}
+  };
+}
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem(LS_KEY));
+    if (d && Array.isArray(d.students) && d.items) return fix(d);
+  } catch (e) {}
+  return defaults();
+}
+function fix(d) {
+  const b = defaults();
+  d.items = Object.assign({ sons: [], ecriture: [], vie: [], matos: [] }, d.items);
+  ["counts", "term", "lent"].forEach(k => d[k] = d[k] || {});
+  d.subjects = d.subjects || b.subjects; d.evals = d.evals || [];
+  return d;
+}
+let S = load();
+let cfg = (() => { try { return JSON.parse(localStorage.getItem(LS_CFG)) || {}; } catch (e) { return {}; } })();
+let dirty = false;
+function save(quiet) {
+  S.updatedAt = new Date().toISOString();
+  try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) { toast("⚠ Stockage du navigateur plein ou bloqué"); }
+  if (!quiet) { dirty = true; schedulePush(); }
+}
+function toast(m) { const t = $("#toast"); t.textContent = m; t.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove("on"), 2600); }
+function modal(html) { $("#mbox").innerHTML = html; $("#modal").classList.add("on"); }
+function closeModal() { $("#modal").classList.remove("on"); }
+$("#modal").addEventListener("click", e => { if (e.target.id === "modal") closeModal(); });
+
+const stud = id => S.students.find(s => s.id === id);
+const subj = id => S.subjects.find(s => s.id === id);
+const subOf = (sj, id) => sj && sj.subs.find(b => b.id === id);
+const compOf = (sb, id) => sb && (sb.comps || []).find(c => c.id === id);
+const cnt = (sid, mod, it) => ((S.counts[sid] || {})[mod] || {})[it] || 0;
+const trm = (sid, mod, it) => ((S.term[sid] || {})[mod] || {})[it] || 0;
+const tot = (sid, mod, it) => cnt(sid, mod, it) + trm(sid, mod, it);
+const cumulMods = ["sons", "ecriture"];   // se cumulent sur tout le trimestre (pas de remise à zéro hebdomadaire)
+function bump(sid, mod, it, d) {
+  const c = ((S.counts[sid] = S.counts[sid] || {})[mod] = S.counts[sid][mod] || {});
+  c[it] = Math.max(0, (c[it] || 0) + d);
+}
+
+/* ---------- Notes automatiques (calculées, jamais enregistrées) ----------
+   écriture → Français › Écriture ; sons → Français › Orthographe ;
+   lignes de vie de classe marquées « consignes » / « règles » → EMC.
+   Barème relatif à la classe : 10/10 = aucune erreur, 3/10 = le plus d'erreurs de la classe (jamais en dessous de 3). */
+let autoWarn = [];
+function findSub(sjRe, subRe) {
+  const sj = S.subjects.find(s => sjRe.test(norm(s.name))); const sb = sj && sj.subs.find(b => subRe.test(norm(b.name)));
+  return sj && sb ? { sj, sb } : null;
+}
+function autoEvals() {
+  autoWarn = [];
+  const out = [];
+  const specs = [
+    { key: "ecriture", label: "Compteur d'écriture (automatique)", where: "Français › Écriture", t: findSub(/fran/, /ecriture/),
+      val: sid => S.items.ecriture.reduce((a, it) => a + tot(sid, "ecriture", it.id), 0), has: S.items.ecriture.length },
+    { key: "sons", label: "Compteur de sons (automatique)", where: "Français › Orthographe", t: findSub(/fran/, /orthographe/),
+      val: sid => S.items.sons.reduce((a, it) => a + tot(sid, "sons", it.id), 0), has: S.items.sons.length },
+    { key: "emc-consignes", label: "Respect des consignes (automatique)", where: "EMC › Respect des consignes", t: findSub(/emc|moral/, /consigne/),
+      val: sid => S.items.vie.filter(i => i.emc === "consignes").reduce((a, it) => a + (it.w ?? 1) * tot(sid, "vie", it.id), 0), has: S.items.vie.some(i => i.emc === "consignes") },
+    { key: "emc-regles", label: "Respect des règles de vie (automatique)", where: "EMC › Respect des règles de vie", t: findSub(/emc|moral/, /regle/),
+      val: sid => S.items.vie.filter(i => i.emc === "regles").reduce((a, it) => a + (it.w ?? 1) * tot(sid, "vie", it.id), 0), has: S.items.vie.some(i => i.emc === "regles") }
+  ];
+  specs.forEach(sp => {
+    if (!sp.has || !S.students.length) return;
+    if (!sp.t) { autoWarn.push(sp.where); return; }
+    const vals = {}; S.students.forEach(s => vals[s.id] = sp.val(s.id));
+    const mx = Math.max(0, ...Object.values(vals)); if (mx === 0) return;
+    const grades = {}; S.students.forEach(s => grades[s.id] = Math.round((3 + 7 * (1 - vals[s.id] / mx)) * 10) / 10);
+    out.push({ id: "auto-" + sp.key, auto: true, date: today(), subjectId: sp.t.sj.id, subId: sp.t.sb.id, label: sp.label, max: 10, grades });
+  });
+  return out;
+}
+let _ae = null;
+const allEvals = () => S.evals.concat(_ae || (_ae = autoEvals()));
+const invalidate = () => { _ae = null; };
+
+/* ---------- Moyennes ---------- */
+const on10 = (v, m) => (typeof v === "number" && m) ? v / m * 10 : null;
+function avgOf(sid, f) { return mean(allEvals().filter(f).map(e => on10(e.grades[sid], e.max))); }
+function classAvg(f) { return mean(S.students.map(s => avgOf(s.id, f))); }
+const cls = v => v === null ? "" : v >= 7.5 ? "g" : v >= 5 ? "o" : "r";
+const pill = v => v === null ? `<span class="pill">–</span>` : `<span class="pill ${cls(v)}">${fmt(v)} / 10</span>`;
+function columns() {   // colonnes du bilan : sous-matières pour maths/français, matière seule pour le reste
+  const cols = [];
+  S.subjects.forEach(sj => {
+    if (!allEvals().some(e => e.subjectId === sj.id)) return;
+    if (isDetailCols(sj.name)) sj.subs.forEach(sb => { if (allEvals().some(e => e.subjectId === sj.id && e.subId === sb.id)) cols.push({ label: sj.name + " › " + sb.name, f: e => e.subjectId === sj.id && e.subId === sb.id, sub: true, sj: sj.name }); });
+    cols.push({ label: sj.name, f: e => e.subjectId === sj.id, sj: sj.name, main: true });
+  });
+  return cols;
+}
+
+/* ===================== Interface ===================== */
+const PAGES = [["vie", "🙂 Vie de classe"], ["sons", "🔊 Sons"], ["ecriture", "✍️ Écriture"], ["notes", "📒 Notes"], ["an", "🔎 Analyses"], ["set", "⚙️ Paramètres"]];
+let page = localStorage.getItem(LS_PAGE) || "vie"; if (!PAGES.some(p => p[0] === page)) page = "vie";
+let sel = {};            // élève sélectionné par module
+let showTable = {};      // vue classe (tableau) par module
+let ntab = "saisie", histF = "";
+let draft = (() => { try { return JSON.parse(localStorage.getItem("classe-ce1-v2-draft")); } catch (e) { return null; } })() || { subjectId: "", subId: "", compId: "", label: "", date: today(), max: 10, grades: {}, editId: null };
+const saveDraft = () => { try { localStorage.setItem("classe-ce1-v2-draft", JSON.stringify(draft)); } catch (e) {} };
+let anSel = "class";
+
+function go(p) { page = p; try { localStorage.setItem(LS_PAGE, p); } catch (e) {} render(); window.scrollTo(0, 0); }
+function render() {
+  invalidate();
+  $("#nav").innerHTML = PAGES.map(([k, l]) => `<button data-go="${k}" class="${k === page ? "on" : ""}">${l}</button>`).join("") + `<span id="sync"></span>`;
+  paintSync();
+  const m = $("#main");
+  if (["vie", "sons", "ecriture"].includes(page)) m.innerHTML = viewCounters(page);
+  else if (page === "notes") m.innerHTML = viewNotes();
+  else if (page === "an") m.innerHTML = viewAnalyses();
+  else m.innerHTML = viewSettings();
+}
+
+/* ---------- Compteurs ---------- */
+let cview = {}, ccat = {}, citem = {};
+function viewCounters(p) {
+  if (!S.students.length) return emptyStudents();
+  const view = cview[p] || "eleve";
+  const mod = p === "vie" ? (ccat.vie || "vie") : p;
+  const items = S.items[mod], sorted = [...S.students].sort(byName);
+  if (!sel[mod] || !stud(sel[mod])) sel[mod] = sorted[0].id;
+  const title = { vie: "🙂 Vie de classe", sons: "🔊 Sons", ecriture: "✍️ Écriture", matos: "📦 Matériel prêté" }[mod];
+  const seg = (attr, cur, opts) => `<div class="row" style="gap:6px">${opts.map(([k, l]) => `<button class="chip ${cur === k ? "on" : ""}" ${attr}="${k}">${l}</button>`).join("")}</div>`;
+  let h = `<div class="card"><div class="row">${p === "vie" ? seg("data-cat", mod, [["vie", "🙂 Vie de classe"], ["matos", "📦 Matériel"]]) : `<h2 style="margin:0">${title}</h2>`}<span class="sp"></span>${p === "vie" ? `<button class="btn sm" data-act="parents">🖨️ Bilan parents</button><button class="btn sm" data-act="newWeek">🧹 Fin de semaine</button>` : ""}${seg("data-cv", view, [["eleve", "👤 Par élève"], ["classe", "👥 Par classe"]])}</div></div>`;
+  if (!items.length) return h + `<div class="card"><p class="muted">Aucune ligne pour « ${title} ». Ajoute-en dans ⚙️ Paramètres › Compteurs.</p></div>`;
+  if (view === "eleve") {
+    const i = sorted.findIndex(s => s.id === sel[mod]), sid = sel[mod];
+    h += `<div class="card"><div class="row" style="margin-bottom:12px"><button class="btn" data-nav="${mod}|-1">◀</button>
+      <select data-selst="${mod}" class="sp" style="font-size:1.1rem;font-weight:700;padding:10px">${sorted.map(s => `<option value="${s.id}" ${s.id === sid ? "selected" : ""}>${esc(s.name)}</option>`).join("")}</select>
+      <button class="btn" data-nav="${mod}|1">▶</button></div><div class="tiles">` + items.map(it => {
+      if (mod === "matos") {
+        const l = S.lent[sid + "::" + it.id];
+        return `<div class="tile ${l ? "lent" : ""}" data-lend="${it.id}"><button class="mn" data-decm="${it.id}" title="Annuler un prêt (−1)">−</button><span class="t">${esc(it.name)}</span><span class="st">${l ? "🔴 Prêté" : "🟢 Rendu"}</span><span class="two"><span><b>${cnt(sid, "matos", it.id)}</b><em>semaine</em></span><span><b>${tot(sid, "matos", it.id)}</b><em>trimestre</em></span></span></div>`;
+      }
+      return `<div class="tile" data-inc="${mod}|${it.id}"><button class="mn" data-dec="${mod}|${it.id}">−</button><span class="t">${esc(it.name)}</span>${cumulMods.includes(mod) ? `<span class="n">${tot(sid, mod, it.id)}</span><span class="c">total du trimestre</span>` : `<span class="two"><span><b>${cnt(sid, mod, it.id)}</b><em>semaine</em></span><span><b>${tot(sid, mod, it.id)}</b><em>trimestre</em></span></span>`}</div>`;
+    }).join("") + `</div></div>`;
+    return h;
+  }
+  /* Par classe : on choisit UNE ligne (ou un objet) et on compte pour tous les élèves */
+  if (!items.some(i => i.id === citem[mod])) citem[mod] = items[0].id;
+  const it = items.find(i => i.id === citem[mod]);
+  h += `<div class="card"><div class="row" style="margin-bottom:12px"><label class="sp">${mod === "matos" ? "Objet" : "Élément"} :
+    <select data-selit="${mod}" style="font-size:1.1rem;font-weight:700;padding:10px;width:100%">${items.map(i => `<option value="${i.id}" ${i.id === it.id ? "selected" : ""}>${esc(i.name)}</option>`).join("")}</select></label></div><div class="tiles">` +
+    sorted.map(s => {
+      if (mod === "matos") {
+        const l = S.lent[s.id + "::" + it.id];
+        return `<div class="tile ${l ? "lent" : ""}" data-lend2="${s.id}|${it.id}"><button class="mn" data-decm2="${s.id}|${it.id}" title="Annuler un prêt (−1)">−</button><span class="t">${esc(s.name)}</span><span class="st">${l ? "🔴 Prêté" : "🟢 Rendu"}</span><span class="two"><span><b>${cnt(s.id, "matos", it.id)}</b><em>semaine</em></span><span><b>${tot(s.id, "matos", it.id)}</b><em>trimestre</em></span></span></div>`;
+      }
+      return `<div class="tile" data-inc2="${mod}|${s.id}|${it.id}"><button class="mn" data-dec2="${mod}|${s.id}|${it.id}">−</button><span class="t">${esc(s.name)}</span>${cumulMods.includes(mod) ? `<span class="n">${tot(s.id, mod, it.id)}</span><span class="c">total du trimestre</span>` : `<span class="two"><span><b>${cnt(s.id, mod, it.id)}</b><em>semaine</em></span><span><b>${tot(s.id, mod, it.id)}</b><em>trimestre</em></span></span>`}</div>`;
+    }).join("") + `</div></div>`;
+  return h;
+}
+const emptyStudents = () => `<div class="card"><h2>Bienvenue 👋</h2><p class="muted">Commence par ajouter tes élèves dans ⚙️ Paramètres. La même liste sert partout : compteurs, notes et analyses.</p><p style="margin-top:10px"><button class="btn pri" data-go="set">Ajouter mes élèves</button></p></div>`;
+
+/* ---------- Notes ---------- */
+function viewNotes() {
+  const tabs = `<div class="chips">${[["saisie", "✏️ Saisie"], ["histo", "📜 Évaluations"], ["bilan", "📊 Bilan"]].map(([k, l]) => `<button class="chip ${ntab === k ? "on" : ""}" data-nt="${k}">${l}</button>`).join("")}</div>`;
+  if (!S.students.length) return emptyStudents();
+  return tabs + (ntab === "saisie" ? notesSaisie() : ntab === "histo" ? notesHisto() : notesBilan());
+}
+function autoNote() {
+  let h = "";
+  if (allEvals().some(e => e.auto)) h += `<p class="muted" style="margin-top:10px">🤖 Les lignes « automatique » viennent des compteurs (sons, écriture, consignes, règles de vie) : 10/10 = aucune erreur, 3/10 = l'élève qui en a le plus dans la classe (jamais moins de 3). Elles évoluent avec les compteurs et ne sont pas enregistrées avec tes notes.</p>`;
+  if (autoWarn.length) h += `<p class="muted" style="margin-top:6px;color:var(--o)">⚠ Note automatique non affichée : la sous-matière « ${autoWarn.map(esc).join(" », « ")} » n'existe pas (⚙️ Paramètres › Matières).</p>`;
+  return h;
+}
+function notesSaisie() {
+  const sj = subj(draft.subjectId);
+  const subs = sj ? sj.subs : [], sb0 = subOf(sj, draft.subId), comps = sb0 ? (sb0.comps || []) : [];
+  const labels = [...new Set(S.evals.map(e => e.label).filter(Boolean))];
+  const rows = [...S.students].sort(byName).map(s => `<tr><td>${esc(s.name)}</td><td><input type="number" step="0.5" min="0" inputmode="decimal" data-g="${s.id}" value="${draft.grades[s.id] ?? ""}" style="width:90px;text-align:center"></td><td id="gp-${s.id}">${pill(on10(draft.grades[s.id], draft.max))}</td></tr>`).join("");
+  return `<div class="card"><h2>${draft.editId ? "Modifier l'évaluation" : "Nouvelle évaluation"}</h2>
+    <div class="fl">
+      <label>Matière<br><select data-d="subjectId"><option value="">— choisir —</option>${S.subjects.map(s => `<option value="${s.id}" ${s.id === draft.subjectId ? "selected" : ""}>${esc(s.name)}</option>`).join("")}</select></label>
+      <label>Sous-matière<br><select data-d="subId"><option value="">—</option>${subs.map(s => `<option value="${s.id}" ${s.id === draft.subId ? "selected" : ""}>${esc(s.name)}</option>`).join("")}</select></label>
+      <label>Compétence évaluée<br><select data-d="compId"><option value="">—</option>${comps.map(c => `<option value="${c.id}" ${c.id === draft.compId ? "selected" : ""}>${esc(c.name)}</option>`).join("")}</select>${sb0 && !comps.length ? '<span class="muted">Ajoute des compétences dans ⚙️ Paramètres › Matières.</span>' : ""}</label>
+      <label>Intitulé<br><input type="text" list="lbls" data-d="label" value="${esc(draft.label)}" placeholder="ex. Dictée 3"><datalist id="lbls">${labels.map(l => `<option value="${esc(l)}">`).join("")}</datalist></label>
+      <div class="row"><label>Date<br><input type="date" data-d="date" value="${draft.date}"></label><label>Barème<br><input type="number" min="1" data-d="max" value="${draft.max}" style="width:80px"></label></div>
+    </div>
+    <div class="scroll" style="margin-top:10px"><table><thead><tr><th>Élève</th><th>Note</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="row" style="margin-top:10px"><span class="muted" id="dmean"></span><span class="sp"></span><button class="btn" data-act="clearDraft">Vider</button><button class="btn pri" data-act="saveEval">${draft.editId ? "Enregistrer les modifications" : "Enregistrer l'évaluation"}</button></div></div>`;
+}
+function updDraftMean() { const el = $("#dmean"); if (!el) return; const m = mean(Object.values(draft.grades).map(v => on10(v, draft.max))); el.textContent = m === null ? "" : "Moyenne : " + fmt(m) + " / 10"; }
+function notesHisto() {
+  const list = allEvals().filter(e => !histF || e.subjectId === histF).sort((a, b) => b.date.localeCompare(a.date));
+  const f = `<div class="card row"><label>Matière : <select data-hf><option value="">Toutes</option>${S.subjects.map(s => `<option value="${s.id}" ${s.id === histF ? "selected" : ""}>${esc(s.name)}</option>`).join("")}</select></label></div>`;
+  if (!list.length) return f + `<div class="card muted">Aucune évaluation pour le moment.</div>`;
+  return f + list.map(e => {
+    const sj = subj(e.subjectId), sb = subOf(sj, e.subId), m = mean(S.students.map(s => on10(e.grades[s.id], e.max)));
+    return `<div class="card"><div class="row"><div class="sp"><b>${esc(e.label || "(sans intitulé)")}</b>${e.auto ? '<span class="auto">🤖 automatique</span>' : ""}<br><span class="muted">${esc(sj ? sj.name : "?")}${sb ? " › " + esc(sb.name) : ""}${compOf(sb, e.compId) ? " › " + esc(compOf(sb, e.compId).name) : ""} · ${frDate(e.date)} · /${e.max}</span></div>${pill(m)}
+      ${e.auto ? "" : `<button class="btn sm" data-edit="${e.id}">Modifier</button><button class="btn sm dan" data-deval="${e.id}">Supprimer</button>`}</div></div>`;
+  }).join("") + autoNote();
+}
+function notesBilan() {
+  const cols = columns();
+  if (!cols.length) return `<div class="card muted">Aucune note pour le moment.</div>`;
+  const cell = v => `<td>${pill(v)}</td>`;
+  return `<div class="card scroll"><table><thead><tr><th>Élève</th>${cols.map(c => `<th>${esc(c.label)}</th>`).join("")}<th>Général</th></tr></thead><tbody>
+    ${[...S.students].sort(byName).map(s => `<tr><td>${esc(s.name)}</td>${cols.map(c => cell(avgOf(s.id, c.f))).join("")}${cell(avgOf(s.id, () => true))}</tr>`).join("")}
+    <tr><td><b>Classe</b></td>${cols.map(c => cell(classAvg(c.f))).join("")}${cell(classAvg(() => true))}</tr></tbody></table>${autoNote()}</div>`;
+}
+
+/* ---------- Analyses ---------- */
+function viewAnalyses() {
+  if (!S.students.length) return emptyStudents();
+  const chips = `<button class="chip ${anSel === "class" ? "on" : ""}" data-an="class">👥 Classe</button>` + [...S.students].sort(byName).map(s => `<button class="chip ${anSel === s.id ? "on" : ""}" data-an="${s.id}">${esc(s.name)}</button>`).join("");
+  const body = anSel === "class" || !stud(anSel) ? classHtml(false) : studentHtml(anSel, false);
+  return `<div class="chips">${chips}</div><div class="row" style="margin-bottom:10px"><span class="sp"></span><button class="btn" data-act="parents">🖨️ Bilan parents (6 élèves / page)</button><button class="btn pri" data-act="print">🖨️ Imprimer / PDF (1 page A4)</button></div>${body}`;
+}
+function modTotals(sid) {   // total par module et par ligne
+  const r = {};
+  ["sons", "ecriture", "vie"].forEach(mod => r[mod] = S.items[mod].map(it => ({ name: it.name, v: tot(sid, mod, it.id), c: mean(S.students.map(s => tot(s.id, mod, it.id))) })));
+  return r;
+}
+function lineHtml(label, v, c, sub, auto) {
+  return `<div class="${sub ? "sub" : ""}"><span class="l">${esc(label)}${auto ? '<span class="auto">🤖</span>' : ""}</span><div class="bar"><i class="${cls(v)}" style="width:${v === null ? 0 : Math.max(2, v * 10)}%"></i></div>${pill(v)}<span class="cl">classe ${c === null ? "–" : fmt(c)}</span></div>`;
+}
+function notesLines(sid) {
+  const E = allEvals(); let h = "";
+  S.subjects.forEach(sj => {
+    if (!E.some(e => e.subjectId === sj.id)) return;
+    const f = e => e.subjectId === sj.id;
+    h += lineHtml(sj.name, avgOf(sid, f), classAvg(f));
+    if (isDetail(sj.name)) sj.subs.forEach(sb => {
+      const g = e => e.subjectId === sj.id && e.subId === sb.id;
+      if (E.some(g)) h += lineHtml(sb.name, avgOf(sid, g), classAvg(g), true, E.some(e => g(e) && e.auto));
+    });
+  });
+  return h;
+}
+function synth(sid) {
+  const s = stud(sid), items = [], E = allEvals(), first = s.name.split(" ")[0];
+  const subs = S.subjects.map(sj => ({ n: sj.name, v: avgOf(sid, e => e.subjectId === sj.id), c: classAvg(e => e.subjectId === sj.id) })).filter(x => x.v !== null);
+  const det = [];
+  S.subjects.filter(sj => isDetail(sj.name)).forEach(sj => sj.subs.forEach(sb => {
+    const g = e => e.subjectId === sj.id && e.subId === sb.id;
+    const v = avgOf(sid, g); if (v !== null) det.push({ n: sj.name + " › " + sb.name, v, c: classAvg(g) });
+  }));
+  const pool = subs.concat(det);
+  const forts = pool.filter(x => x.v >= 7.5 || (x.c !== null && x.v - x.c >= 1.2)).sort((a, b) => b.v - a.v).slice(0, 4);
+  const faibles = pool.filter(x => x.v < 5 || (x.c !== null && x.v - x.c <= -1.5)).sort((a, b) => a.v - b.v).slice(0, 4);
+  const g = avgOf(sid, () => true), gc = classAvg(() => true);
+  if (g !== null) items.push(`<b>Résultats :</b> moyenne générale ${fmt(g)}/10${gc !== null ? ` (classe : ${fmt(gc)})` : ""}${g >= 7.5 ? ", très satisfaisante" : g >= 5 ? ", correcte" : ", fragile : un accompagnement est conseillé"}.`);
+  if (forts.length) items.push(`<b>Points forts :</b> ${forts.map(x => `${esc(x.n)} (${fmt(x.v)})`).join(", ")}.`);
+  if (faibles.length) items.push(`<b>À renforcer :</b> ${faibles.map(x => `${esc(x.n)} (${fmt(x.v)})`).join(", ")}.`);
+  if (g === null) items.push("Pas encore de notes pour cet élève.");
+  const T = modTotals(sid), lab = { sons: "Sons", ecriture: "Écriture", vie: "Vie de classe" };
+  ["sons", "ecriture", "vie"].forEach(mod => {
+    const mine = T[mod].reduce((a, x) => a + x.v, 0), cm = T[mod].reduce((a, x) => a + (x.c || 0), 0);
+    if (!T[mod].length || cm === 0) return;
+    const top = [...T[mod]].filter(x => x.v > 0).sort((a, b) => b.v - a.v)[0];
+    if (mine === 0) items.push(`<b>${lab[mod]} :</b> aucune erreur relevée, un vrai point fort.`);
+    else if (mine > cm * 1.5 + 1) items.push(`<b>${lab[mod]} :</b> ${mine} relevé(s), nettement au-dessus de la moyenne de la classe (${fmt(cm)})${top ? `, surtout « ${esc(top.name)} » (×${top.v})` : ""}.`);
+    else if (mine < cm * 0.6) items.push(`<b>${lab[mod]} :</b> ${mine} relevé(s), en dessous de la moyenne de la classe (${fmt(cm)}) : bonne maîtrise.`);
+  });
+  const lent = Object.keys(S.lent).filter(k => S.lent[k] && k.startsWith(sid + "::")).map(k => (S.items.matos.find(i => i.id === k.split("::")[1]) || {}).name).filter(Boolean);
+  if (lent.length) items.push(`<b>Matériel prêté en ce moment :</b> ${lent.map(esc).join(", ")}.`);
+  return items;
+}
+function counterBlock(sid) {
+  const T = modTotals(sid); let h = "";
+  ["vie", "sons", "ecriture"].forEach(mod => {
+    if (!T[mod].length) return;
+    const mine = T[mod].reduce((a, x) => a + x.v, 0), cm = T[mod].reduce((a, x) => a + (x.c || 0), 0);
+    h += `<div class="lines"><div style="border:0"><b>${MODS[mod]}</b><span class="sp"></span><span class="muted">total ${mine} · moyenne classe ${fmt(cm)}</span></div>${T[mod].filter(x => x.v > 0 || (x.c || 0) > 0).map(x => `<div class="sub"><span class="l">${esc(x.name)}</span><span class="pill">${x.v}</span><span class="cl">classe ${fmt(x.c || 0)}</span></div>`).join("")}</div>`;
+  });
+  return h;
+}
+/* ---------- Bilan élève : même mise en page à l'écran et à l'impression ---------- */
+const lvl = v => v === null ? "" : v >= 7.5 ? "g" : v >= 5 ? "o" : "r";
+const ico = v => v >= 7.5 ? "✓" : v >= 5 ? "~" : "!";
+const pl2 = v => v === null ? `<span class="bp">–</span>` : `<span class="bp ${lvl(v)}">${ico(v)} ${fmt(v)}</span>`;
+function bRow(label, v, c, sub, auto) {
+  return `<div class="brow ${sub ? "bsub" : ""}"><span class="bl">${esc(label)}${auto ? ' <small>🤖</small>' : ""}</span><div class="bbar"><i class="${lvl(v)}" style="width:${v === null ? 0 : Math.max(3, v * 10)}%"></i>${c === null ? "" : `<u style="left:${Math.min(99, c * 10)}%"></u>`}</div>${pl2(v)}<span class="bc">classe ${c === null ? "–" : fmt(c)}</span></div>`;
+}
+function bilanUnits(sid) {   // sous-matières (Français, Maths, EMC) ou matière seule
+  const E = allEvals(), u = [];
+  S.subjects.forEach(sj => {
+    if (!E.some(e => e.subjectId === sj.id)) return;
+    if (isDetail(sj.name)) sj.subs.forEach(sb => { const f = e => e.subjectId === sj.id && e.subId === sb.id; if (E.some(f)) { const v = avgOf(sid, f); if (v !== null) u.push({ n: sb.name, s: sj.name, v }); } });
+    else { const v = avgOf(sid, e => e.subjectId === sj.id); if (v !== null) u.push({ n: sj.name, s: "", v }); }
+  });
+  return u;
+}
+function bilanEleve(sid) {
+  const s = stud(sid), E = allEvals(), date = new Date().toLocaleDateString("fr-FR");
+  const g = avgOf(sid, () => true), gc = classAvg(() => true);
+  const nEv = E.filter(e => typeof e.grades[sid] === "number").length;
+  const C = 2 * Math.PI * 52, col = { g: "#2f9e6b", o: "#c9822a", r: "#d64545", "": "#aab" }[lvl(g)];
+  const hero = g === null ? "" : `<div class="bhero"><svg viewBox="0 0 120 120" class="bring"><circle cx="60" cy="60" r="52" fill="none" stroke="#e9ebf3" stroke-width="12"/><circle cx="60" cy="60" r="52" fill="none" stroke="${col}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${(C * g / 10).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 60 60)"/><text x="60" y="64" text-anchor="middle" font-size="30" font-weight="800" fill="#222">${fmt(g)}</text><text x="60" y="82" text-anchor="middle" font-size="12" fill="#888">/10</text></svg>
+    <div><div class="bhl">${pl2(g)} <b>${g >= 7.5 ? "Acquis" : g >= 5 ? "En cours d'acquisition" : "À renforcer"}</b></div><div class="bhs">${nEv} évaluation${nEv > 1 ? "s" : ""}${gc !== null ? ` · classe : ${fmt(gc)} (${g - gc >= 0 ? "+" : "−"}${fmt(Math.abs(g - gc))})` : ""}</div></div></div>`;
+  const U = bilanUnits(sid), forts = U.filter(x => x.v >= 7.5).sort((a, b) => b.v - a.v).slice(0, 3), trav = U.filter(x => x.v < 7.5).sort((a, b) => a.v - b.v).slice(0, 4);
+  const urow = x => `<div class="burow"><span>${esc(x.n)}${x.s ? ` <small>· ${esc(x.s)}</small>` : ""}</span>${pl2(x.v)}</div>`;
+  const pf = `<div class="bbox"><h5>💪 Points forts</h5>${forts.map(urow).join("") || '<div class="bmuted">—</div>'}</div><div class="bbox"><h5>🎯 À travailler</h5>${trav.map(urow).join("") || '<div class="bmuted">—</div>'}</div>`;
+  const cards = [];
+  S.subjects.filter(sj => isDetail(sj.name) && E.some(e => e.subjectId === sj.id)).forEach(sj => {
+    const f = e => e.subjectId === sj.id;
+    cards.push(`<div class="bcard"><div class="bch"><b>${esc(sj.name)}</b><span>${pl2(avgOf(sid, f))} <small>classe ${fmt(classAvg(f) ?? 0)}</small></span></div>${sj.subs.map(sb => { const q = e => e.subjectId === sj.id && e.subId === sb.id; return E.some(q) ? bRow(sb.name, avgOf(sid, q), classAvg(q), true, E.some(e => q(e) && e.auto)) : ""; }).join("")}</div>`);
+  });
+  const others = S.subjects.filter(sj => !isDetail(sj.name) && E.some(e => e.subjectId === sj.id));
+  if (others.length) cards.push(`<div class="bcard ${others.length > 4 ? "bspan2" : ""}"><div class="bch"><b>Autres matières</b></div><div class="bcols">${others.map(sj => { const f = e => e.subjectId === sj.id; return bRow(sj.name, avgOf(sid, f), classAvg(f), true); }).join("")}</div></div>`);
+  const T = modTotals(sid), box = (title, key, ico2) => {
+    const L = key === "matos" ? S.items.matos.map(it => ({ name: it.name, v: tot(sid, "matos", it.id), c: mean(S.students.map(x => tot(x.id, "matos", it.id))) })) : T[key];
+    if (!L.length) return "";
+    const totals = S.students.map(x => (key === "matos" ? S.items.matos : S.items[key]).reduce((a, it) => a + tot(x.id, key, it.id), 0));
+    const mine = L.reduce((a, x) => a + x.v, 0), cm = mean(totals) || 0, mx = Math.max(1, ...totals);
+    const lv = cm === 0 ? (mine === 0 ? "g" : "r") : mine <= cm ? "g" : mine <= cm * 1.5 ? "o" : "r";   // moins = mieux
+    const cur = `<div class="bbar bcur" title="L'élève par rapport à la moyenne de la classe (repère noir)"><i class="${lv}" style="width:${mine === 0 ? 0 : Math.max(3, mine / mx * 100)}%"></i><u style="left:${Math.min(99, cm / mx * 100)}%"></u></div>`;
+    return `<div class="bbox bcnt"><h5>${ico2} ${title}<span class="bn">${mine}</span></h5>${[...L].filter(x => x.v > 0).sort((a, b) => b.v - a.v).slice(0, 4).map(x => `<div class="burow"><span>${esc(x.name)}</span><b>${x.v}</b></div>`).join("") || '<div class="bmuted">Rien à signaler</div>'}${cur}<div class="bmuted" style="margin-top:3px">Moyenne de la classe : ${fmt(cm)}</div></div>`;
+  };
+  const counters = box("Sons", "sons", "🔊") + box("Écriture", "ecriture", "✍️") + box("Matériel prêté", "matos", "📦") + box("Vie de classe", "vie", "🙂");
+  return `<div class="bil"><div class="bhead"><h1>${esc(s.name)}</h1><span>Bilan de l'élève · ${date}</span></div>${hero}
+    <div class="bgrid2">${pf}${cards.join("")}</div>
+    ${counters ? `<div class="bgrid4">${counters}</div>` : ""}
+    <div class="bfoot">Notes ramenées sur 10 · vert : acquis (7,5 et plus) · orange : en cours d'acquisition (5 à 7,5) · rouge : à renforcer (moins de 5) · repère noir : moyenne de la classe.<br>🤖 = note automatique calculée à partir des compteurs (de 3 à 10, relative à la classe).</div></div>`;
+}
+function detailTree(sid) {
+  const E = allEvals().filter(e => typeof e.grades[sid] === "number");
+  const evRow = e => { const sj = subj(e.subjectId), sb = subOf(sj, e.subId), cp = compOf(sb, e.compId), v = on10(e.grades[sid], e.max), c = mean(S.students.map(s => on10(e.grades[s.id], e.max)));
+    return `<div class="dev"><span class="dd">${frDate(e.date)}</span><span class="dn">${esc(e.label || "(sans intitulé)")}${cp ? ` <small>· ${esc(cp.name)}</small>` : ""}${e.auto ? ' <small>🤖</small>' : ""}</span><span class="dm">${e.grades[sid]} / ${e.max}</span>${pl2(v)}<span class="bc">classe ${c === null ? "–" : fmt(c)}</span></div>`; };
+  const sum = (label, f, cls2) => `<summary class="${cls2 || ""}"><span class="sl">${esc(label)}</span>${pl2(avgOf(sid, f))}<span class="bc">classe ${fmt(classAvg(f) ?? 0)}</span></summary>`;
+  const h = S.subjects.filter(sj => E.some(e => e.subjectId === sj.id)).map(sj => {
+    const all = E.filter(e => e.subjectId === sj.id), direct = all.filter(e => !sj.subs.some(b => b.id === e.subId));
+    const subs = sj.subs.filter(sb => all.some(e => e.subId === sb.id)).map(sb => `<details class="dt dsub">${sum(sb.name, e => e.subjectId === sj.id && e.subId === sb.id)}${all.filter(e => e.subId === sb.id).sort((a, b) => b.date.localeCompare(a.date)).map(evRow).join("")}</details>`).join("");
+    return `<details class="dt">${sum(sj.name, e => e.subjectId === sj.id, "ds")}${subs}${direct.sort((a, b) => b.date.localeCompare(a.date)).map(evRow).join("")}</details>`;
+  }).join("");
+  return h ? `<div class="card"><h3>📂 Détail par matière <span class="muted">— clique pour dérouler les sous-matières et les évaluations</span></h3>${h}</div>` : "";
+}
+function studentHtml(sid) {
+  return `<div class="card">${bilanEleve(sid)}</div>${detailTree(sid)}<div class="card"><h3>Synthèse écrite</h3><ul class="synth">${synth(sid).map(x => `<li>${x}</li>`).join("")}</ul>${autoWarn.length ? autoNote() : ""}</div>`;
+}
+function classHtml() {
+  const cols = columns().filter(c => c.main);
+  const sorted = [...S.students].sort(byName);
+  const notes = cols.length ? `<div class="scroll"><table><thead><tr><th>Élève</th>${cols.map(c => `<th>${esc(c.label)}</th>`).join("")}<th>Général</th></tr></thead><tbody>${sorted.map(s => `<tr><td>${esc(s.name)}</td>${cols.map(c => `<td>${pill(avgOf(s.id, c.f))}</td>`).join("")}<td>${pill(avgOf(s.id, () => true))}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">Aucune note.</p>`;
+  const cnt3 = ["vie", "sons", "ecriture"].filter(m => S.items[m].length);
+  const cc = cnt3.length ? `<div class="scroll"><table><thead><tr><th>Élève</th>${cnt3.map(m => `<th>${MODS[m]}</th>`).join("")}</tr></thead><tbody>${sorted.map(s => `<tr><td>${esc(s.name)}</td>${cnt3.map(m => `<td>${S.items[m].reduce((a, it) => a + tot(s.id, m, it.id), 0)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>` : `<p class="muted">Aucun compteur.</p>`;
+  const lent = Object.keys(S.lent).filter(k => S.lent[k]).map(k => { const [sid, iid] = k.split("::"); const st = stud(sid), it = S.items.matos.find(i => i.id === iid); return st && it ? `${esc(st.name)} : ${esc(it.name)}` : null; }).filter(Boolean);
+  return `<div class="card"><h2>Notes de la classe</h2>${notes}${autoNote()}</div><div class="card"><h2>Compteurs (cumul du trimestre)</h2>${cc}</div>${lent.length ? `<div class="card"><h3>📦 Matériel actuellement prêté</h3><p>${lent.join(" · ")}</p></div>` : ""}`;
+}
+
+/* Impression : une seule page A4 */
+function sheetHtml() {
+  const date = new Date().toLocaleDateString("fr-FR");
+  if (anSel === "class" || !stud(anSel)) {
+    const cols = columns().filter(c => c.main), sorted = [...S.students].sort(byName), c3 = ["vie", "sons", "ecriture"].filter(m => S.items[m].length);
+    return `<h1>Bilan de la classe</h1><div style="color:#777">${date} · ${S.students.length} élèves</div><h4>Notes (moyennes sur 10)</h4>
+      <table><thead><tr><th>Élève</th>${cols.map(c => `<th>${esc(c.label)}</th>`).join("")}<th>Général</th>${c3.map(m => `<th>${MODS[m]}</th>`).join("")}</tr></thead><tbody>${sorted.map(s => `<tr><td>${esc(s.name)}</td>${cols.map(c => { const v = avgOf(s.id, c.f); return `<td>${v === null ? "–" : fmt(v)}</td>`; }).join("")}<td><b>${(() => { const v = avgOf(s.id, () => true); return v === null ? "–" : fmt(v); })()}</b></td>${c3.map(m => `<td>${S.items[m].reduce((a, it) => a + tot(s.id, m, it.id), 0)}</td>`).join("")}</tr>`).join("")}
+      <tr><td><b>Classe</b></td>${cols.map(c => { const v = classAvg(c.f); return `<td><b>${v === null ? "–" : fmt(v)}</b></td>`; }).join("")}<td><b>${(() => { const v = classAvg(() => true); return v === null ? "–" : fmt(v); })()}</b></td>${c3.map(() => "<td></td>").join("")}</tr></tbody></table>`;
+  }
+  return bilanEleve(anSel);
+}
+function mondayLabel() { const m = new Date(); m.setDate(m.getDate() - ((m.getDay() + 6) % 7)); return "Semaine du " + m.toLocaleDateString("fr-FR"); }
+function parentsHtml() {
+  const wl = mondayLabel(), sorted = [...S.students].sort(byName), pages = [];
+  for (let i = 0; i < sorted.length; i += 6) pages.push(sorted.slice(i, i + 6));
+  return pages.map(pg => `<div class="ppage"><div class="ph"><b>Bilan de vie de classe</b><br><i style="color:#777">${wl}</i></div>${pg.map(s => {
+    const lines = S.items.vie.map(it => `<div class="pl"><span>${esc(it.name)}</span><span class="d"></span><b>${cnt(s.id, "vie", it.id)}</b></div>`).join("");
+    const mat = S.items.matos.filter(it => cnt(s.id, "matos", it.id) > 0).map(it => `${esc(it.name)} : ${cnt(s.id, "matos", it.id)}`);
+    const nr = S.items.matos.filter(it => S.lent[s.id + "::" + it.id]).map(it => esc(it.name));
+    return `<div class="pcard"><div class="pn"><b>${esc(s.name)}</b><i>${wl}</i></div>${lines || '<i>Aucune ligne de vie de classe.</i>'}
+      <div class="pm"><div><b>Matériel :</b> ${mat.length ? mat.join(" · ") : "—"}${nr.length ? `<br><b>Non rendu : ${nr.join(", ")}</b>` : ""}</div><div class="sg">Signature : <u>&nbsp;</u></div></div></div>`;
+  }).join("")}</div>`).join("");
+}
+let printMode = "";
+window.addEventListener("afterprint", () => { printMode = ""; });
+function buildSheet() {
+  invalidate(); const w = $("#sheetIn"); w.style.zoom = 1;
+  const sh = $("#sheet"); sh.style.cssText = "display:block;position:absolute;left:-10000px;top:0;visibility:hidden";   // mesurable hors écran
+  if (printMode === "parents") {
+    w.innerHTML = parentsHtml();
+    w.querySelectorAll(".pcard").forEach(c => { let fs = 11; c.style.fontSize = fs + "px"; while (c.scrollHeight > c.clientHeight + 1 && fs > 5) { fs -= 0.4; c.style.fontSize = fs + "px"; } });
+  } else {
+    w.innerHTML = sheetHtml();
+    const maxH = 276 * 3.7795, h = w.scrollHeight;
+    if (h > maxH) w.style.zoom = Math.max(0.45, maxH / h * 0.98);
+  }
+  sh.style.cssText = "";
+}
+window.addEventListener("beforeprint", buildSheet);
+
+/* ---------- Paramètres ---------- */
+function viewSettings() {
+  const studs = [...S.students].sort(byName).map(s => `<div class="row" style="padding:3px 0"><input type="text" value="${esc(s.name)}" data-rn="${s.id}" class="sp"><button class="btn sm dan" data-ds="${s.id}">✕</button></div>`).join("");
+  const itemList = mod => S.items[mod].map(it => `<div class="row" style="padding:3px 0"><input type="text" value="${esc(it.name)}" data-ri="${mod}|${it.id}" class="sp">
+      ${mod === "vie" ? `<select data-emc="${it.id}" title="Compte pour une note automatique EMC"><option value="">pas de note EMC</option><option value="consignes" ${it.emc === "consignes" ? "selected" : ""}>EMC · consignes</option><option value="regles" ${it.emc === "regles" ? "selected" : ""}>EMC · règles de vie</option></select>
+      <label class="muted">poids <input type="number" min="0" step="0.5" value="${it.w ?? 1}" data-w="${it.id}" style="width:62px"></label>` : ""}
+      <button class="btn sm dan" data-di="${mod}|${it.id}">✕</button></div>`).join("");
+  const addRow = (key, ph) => `<div class="row" style="margin-top:6px"><input type="text" id="add-${key}" placeholder="${ph}" class="sp"><button class="btn sm pri" data-add="${key}">Ajouter</button></div>`;
+  const subjs = S.subjects.map(sj => `<div style="padding:6px 0;border-bottom:1px solid #f0f2f7"><div class="row"><input type="text" value="${esc(sj.name)}" data-rsj="${sj.id}" class="sp"><button class="btn sm dan" data-dsj="${sj.id}">✕</button></div>
+      <div style="margin-left:14px">${sj.subs.map(sb => `<div class="row" style="padding:2px 0"><input type="text" value="${esc(sb.name)}" data-rsb="${sj.id}|${sb.id}" class="sp"><button class="btn sm dan" data-dsb="${sj.id}|${sb.id}">✕</button></div>
+        <div style="margin-left:16px">${(sb.comps || []).map(c => `<div class="row" style="padding:1px 0"><span class="muted">↳</span><input type="text" value="${esc(c.name)}" data-rcp="${sj.id}|${sb.id}|${c.id}" class="sp"><button class="btn sm dan" data-dcp="${sj.id}|${sb.id}|${c.id}">✕</button></div>`).join("")}
+        <div class="row" style="padding:1px 0"><span class="muted">↳</span><input type="text" id="add-cp-${sb.id}" placeholder="Nouvelle compétence évaluée" class="sp"><button class="btn sm" data-addcp="${sj.id}|${sb.id}">+</button></div></div>`).join("")}
+      <div class="row" style="margin-top:4px"><input type="text" id="add-sb-${sj.id}" placeholder="Nouvelle sous-matière" class="sp"><button class="btn sm" data-addsb="${sj.id}">+</button></div></div></div>`).join("");
+  const st = cfgStatus();
+  return `<div class="card"><h2>👥 Élèves (${S.students.length})</h2>${studs}${addRow("student", "Prénom (ou Prénom Nom)")}
+      <details><summary>Ajouter plusieurs élèves d'un coup</summary><textarea id="bulk" placeholder="Un élève par ligne"></textarea><button class="btn sm pri" data-add="bulk">Ajouter la liste</button></details></div>
+    <div class="card"><h2>🔢 Compteurs</h2>
+      <h3>🙂 Vie de classe</h3><p class="muted">Pour la note EMC automatique : choisis, pour chaque ligne, « consignes » ou « règles de vie », et un poids (une ligne plus grave peut compter 2 ou 3).</p>${itemList("vie")}${addRow("vie", "Nouvelle ligne de vie de classe")}
+      <h3 style="margin-top:14px">🔊 Sons</h3>${itemList("sons")}${addRow("sons", "Nouveau son (ex. ou, ch, an…)")}
+      <h3 style="margin-top:14px">✍️ Écriture</h3>${itemList("ecriture")}${addRow("ecriture", "Nouvelle ligne d'écriture")}
+      <h3 style="margin-top:14px">📦 Matériel</h3>${itemList("matos")}${addRow("matos", "Nouvel objet (ex. ✏️ Crayon)")}</div>
+    <div class="card"><h2>📚 Matières et sous-matières</h2><p class="muted">Sous chaque sous-matière, ajoute les compétences évaluées (elles se choisissent ensuite à la saisie). Pour les notes automatiques, garde « Français › Écriture », « Français › Orthographe », « EMC › Respect des consignes » et « EMC › Respect des règles de vie ». Le détail par sous-matière s'affiche pour Français et Mathématiques.</p>${subjs}${addRow("subject", "Nouvelle matière")}</div>
+    <div class="card"><h2>🗓️ Semaine et trimestre</h2>
+      <p class="muted">Vie de classe et matériel se comptent par semaine (« Fin de semaine » les archive dans le cumul) ; sons et écriture se cumulent sur tout le trimestre. Les analyses utilisent le cumul + la semaine en cours.</p>
+      <div class="row" style="margin-top:8px"><button class="btn" data-act="newWeek">🧹 Fin de semaine</button><button class="btn" data-act="parents">🖨️ Bilan parents</button><button class="btn dan" data-act="newTerm">Nouveau trimestre…</button></div></div>
+    <div class="card"><h2>💾 Données</h2><div class="row"><button class="btn pri" data-act="csv">Exporter le CSV unique</button><button class="btn" data-act="json">Sauvegarde complète (JSON)</button><button class="btn" data-act="import">Importer une sauvegarde…</button></div><input type="file" id="imp" accept=".json,application/json" style="display:none"></div>
+    <div class="card"><h2>☁️ Synchronisation Supabase</h2>
+      <p class="muted" id="cfgst">${st}</p>
+      <div class="fl" style="margin-top:8px"><label>URL du projet<br><input type="url" id="c-url" value="${esc(cfg.url || "")}" placeholder="https://xxxx.supabase.co" style="width:100%"></label>
+      <label>Clé « anon public »<br><input type="password" id="c-key" value="${esc(cfg.key || "")}" style="width:100%"></label>
+      <label>Code secret de la classe<br><input type="text" id="c-code" value="${esc(cfg.code || "")}" placeholder="8 caractères minimum" style="width:100%"></label></div>
+      <div class="row" style="margin-top:10px"><button class="btn pri" data-act="cfgSave">Enregistrer et synchroniser</button><button class="btn" data-act="pull">Récupérer depuis le cloud</button><button class="btn" data-act="cfgOff">Désactiver</button></div>
+      <h3 style="margin-top:14px">Mise en place (une seule fois)</h3>${SETUP_HELP}</div>`;
+}
+const cfgStatus = () => cfg.url && cfg.key && cfg.code ? "Synchronisation activée." : "Pas de synchronisation : les données restent dans ce navigateur (pense à la sauvegarde JSON).";
+
+const SQL = `-- À coller dans Supabase › SQL Editor › Run (une seule fois)
+create table if not exists public.classe_data (
+  code text primary key check (length(code) >= 8),
+  data jsonb not null,
+  rev integer not null default 1,
+  updated_at timestamptz not null default now()
+);
+create table if not exists public.classe_history (
+  id bigserial primary key,
+  code text not null,
+  data jsonb not null,
+  rev integer not null,
+  saved_at timestamptz not null default now()
+);
+-- Sécurité : aucune lecture/écriture directe, uniquement via les 2 fonctions ci-dessous
+alter table public.classe_data enable row level security;
+alter table public.classe_history enable row level security;
+
+create or replace function public.classe_get(p_code text) returns jsonb
+language sql security definer set search_path = public as $$
+  select jsonb_build_object('rev', rev, 'data', data, 'updated_at', updated_at)
+  from public.classe_data where code = p_code and length(p_code) >= 8;
+$$;
+
+create or replace function public.classe_put(p_code text, p_data jsonb, p_base integer, p_force boolean default false)
+returns integer language plpgsql security definer set search_path = public as $$
+declare cur integer; old jsonb;
+begin
+  if length(p_code) < 8 then raise exception 'code trop court'; end if;
+  select rev, data into cur, old from public.classe_data where code = p_code for update;
+  if not found then
+    insert into public.classe_data(code, data, rev) values (p_code, p_data, 1);
+    return 1;
+  end if;
+  if not p_force and cur <> p_base then return -1; end if;  -- conflit : rien n'est écrasé
+  insert into public.classe_history(code, data, rev) values (p_code, old, cur);  -- ancienne version gardée
+  delete from public.classe_history where code = p_code and id not in
+    (select id from public.classe_history where code = p_code order by id desc limit 30);
+  update public.classe_data set data = p_data, rev = cur + 1, updated_at = now() where code = p_code;
+  return cur + 1;
+end $$;
+
+revoke all on function public.classe_get(text) from public;
+revoke all on function public.classe_put(text, jsonb, integer, boolean) from public;
+grant execute on function public.classe_get(text) to anon, authenticated;
+grant execute on function public.classe_put(text, jsonb, integer, boolean) to anon, authenticated;`;
+const SETUP_HELP = `<ol style="margin:8px 0 0 18px;line-height:1.6"><li>Crée un projet sur supabase.com (gratuit).</li><li>Ouvre <b>SQL Editor</b>, colle le script ci-dessous, clique <b>Run</b>.</li><li><b>Project Settings › API</b> : copie l'<b>URL</b> et la clé <b>anon public</b> dans les champs ci-dessus.</li><li>Invente un <b>code secret</b> (8 caractères minimum, difficile à deviner) : c'est lui qui protège tes données. Utilise le même sur tous tes appareils.</li><li>Clique « Enregistrer et synchroniser ».</li></ol>
+  <p style="margin:12px 0 4px"><b>Script SQL à coller dans Supabase :</b> <button class="btn sm pri" data-act="copySql">📋 Copier le script SQL</button></p><pre class="sql">${esc(SQL)}</pre>`;
+
+/* ===================== Synchronisation ===================== */
+let pushTimer = null, syncMsg = "", syncErr = false;
+const cloudOn = () => !!(cfg.url && cfg.key && cfg.code);
+function paintSync() { const e = $("#sync"); if (!e) return; e.textContent = !cloudOn() ? "" : syncMsg; e.className = syncErr ? "err" : ""; }
+function setSync(m, err) { syncMsg = m; syncErr = !!err; paintSync(); }
+async function rpc(fn, body) {
+  const r = await fetch(cfg.url.replace(/\/+$/, "").replace(/\/rest\/v1$/, "") + "/rest/v1/rpc/" + fn, {
+    method: "POST", headers: { "Content-Type": "application/json", apikey: cfg.key, Authorization: "Bearer " + cfg.key }, body: JSON.stringify(body)
+  });
+  if (!r.ok) throw new Error((await r.text()).slice(0, 160) || r.status);
+  return r.json();
+}
+function saveCfg() { try { localStorage.setItem(LS_CFG, JSON.stringify(cfg)); } catch (e) {} }
+function schedulePush() { if (!cloudOn()) return; clearTimeout(pushTimer); setSync("⏳ à envoyer…"); pushTimer = setTimeout(() => push(false), 1500); }
+async function push(force) {
+  if (!cloudOn()) return;
+  try {
+    setSync("☁️ envoi…");
+    const rev = await rpc("classe_put", { p_code: cfg.code, p_data: S, p_base: cfg.rev || 0, p_force: !!force });
+    if (rev === -1) { setSync("⚠ conflit", true); return conflict(); }
+    cfg.rev = rev; saveCfg(); dirty = false; setSync("☁️ à jour");
+  } catch (e) { setSync("⚠ hors ligne / erreur", true); console.warn(e); }
+}
+async function pull(manual) {
+  if (!cloudOn()) return;
+  try {
+    setSync("☁️ lecture…");
+    const r = await rpc("classe_get", { p_code: cfg.code });
+    if (!r) { await push(false); if (manual) toast("Cloud vide : tes données y ont été envoyées ✓"); return; }
+    if (r.rev === cfg.rev && !manual) { setSync("☁️ à jour"); if (dirty) push(false); return; }
+    if (dirty && r.rev !== cfg.rev) return conflict(r);
+    adopt(r); if (manual) toast("Données du cloud chargées ✓");
+  } catch (e) { setSync("⚠ hors ligne / erreur", true); console.warn(e); if (manual) toast("Synchro impossible : " + e.message); }
+}
+function adopt(r) { S = fix(r.data); cfg.rev = r.rev; saveCfg(); save(true); dirty = false; setSync("☁️ à jour"); render(); }
+async function conflict(r) {
+  try { r = r || await rpc("classe_get", { p_code: cfg.code }); } catch (e) { return; }
+  const n = d => `${(d.students || []).length} élève(s), ${(d.evals || []).length} évaluation(s)`;
+  modal(`<h2>⚠ Deux versions différentes</h2><p class="muted">Les données ont changé ailleurs (autre appareil) pendant que tu modifiais celles-ci. Rien n'a été écrasé. Que veux-tu garder ?</p>
+    <p style="margin:10px 0"><b>Cet appareil :</b> ${n(S)}<br><b>Cloud :</b> ${n(r.data)}${r.updated_at ? " (modifié le " + new Date(r.updated_at).toLocaleString("fr-FR") + ")" : ""}</p>
+    <div class="row"><button class="btn pri" id="cf-cloud">Garder la version du cloud</button><button class="btn dan" id="cf-mine">Garder celle-ci (remplace le cloud)</button></div>
+    <p class="muted" style="margin-top:8px">Dans les deux cas, une sauvegarde de la version abandonnée est téléchargée, et le cloud garde ses 30 dernières versions.</p>`);
+  $("#cf-cloud").onclick = () => { download("sauvegarde-appareil-" + today() + ".json", JSON.stringify(S, null, 2)); adopt(r); closeModal(); toast("Version du cloud chargée ✓"); };
+  $("#cf-mine").onclick = async () => { download("sauvegarde-cloud-" + today() + ".json", JSON.stringify(r.data, null, 2)); cfg.rev = r.rev; saveCfg(); closeModal(); await push(true); toast("Cloud remplacé ✓"); };
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden) pull(false); });
+setInterval(() => { if (!document.hidden && !dirty) pull(false); }, 60000);
+
+/* ===================== Export / import ===================== */
+function download(name, text, type) {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type: type || "application/json" }));
+  a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800);
+}
+function exportCsv() {
+  const q = v => { v = String(v ?? ""); return /[;"\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  const line = a => a.map(q).join(";"), num = v => v === null ? "" : String(Math.round(v * 100) / 100).replace(".", ",");
+  const out = [], sorted = [...S.students].sort(byName), cols = columns();
+  out.push(line(["BILAN PAR ÉLÈVE (cumul : semaines précédentes + semaine en cours)"]));
+  const head = ["Élève", ...cols.map(c => c.label + " (/10)"), "Moyenne générale (/10)"];
+  const mc = []; ["vie", "sons", "ecriture", "matos"].forEach(m => S.items[m].forEach(it => mc.push({ m, it })));
+  out.push(line([...head, ...mc.map(x => MODS[x.m] + " — " + x.it.name)]));
+  sorted.forEach(s => out.push(line([s.name, ...cols.map(c => num(avgOf(s.id, c.f))), num(avgOf(s.id, () => true)), ...mc.map(x => tot(s.id, x.m, x.it.id))])));
+  out.push(line(["Moyenne de la classe", ...cols.map(c => num(classAvg(c.f))), num(classAvg(() => true))]));
+  out.push(""); out.push(line(["DÉTAIL DES ÉVALUATIONS (notes brutes ; « automatique » = calculée depuis les compteurs)"]));
+  out.push(line(["Date", "Matière", "Sous-matière", "Compétence", "Intitulé", "Barème", "Automatique", ...sorted.map(s => s.name)]));
+  [...allEvals()].sort((a, b) => a.date.localeCompare(b.date)).forEach(e => { const sj = subj(e.subjectId); out.push(line([frDate(e.date), sj ? sj.name : "", (subOf(sj, e.subId) || {}).name || "", (compOf(subOf(sj, e.subId), e.compId) || {}).name || "", e.label, e.max, e.auto ? "oui" : "", ...sorted.map(s => typeof e.grades[s.id] === "number" ? String(e.grades[s.id]).replace(".", ",") : "")])); });
+  out.push(""); out.push(line(["MATÉRIEL ACTUELLEMENT PRÊTÉ"]));
+  Object.keys(S.lent).filter(k => S.lent[k]).forEach(k => { const [sid, iid] = k.split("::"); const st = stud(sid), it = S.items.matos.find(i => i.id === iid); if (st && it) out.push(line([st.name, it.name])); });
+  download("classe-ce1-" + today() + ".csv", "﻿" + out.join("\r\n"), "text/csv;charset=utf-8");
+}
+
+/* ===================== Actions ===================== */
+function addStudents(names) {
+  let n = 0; names.forEach(x => { x = x.trim(); if (x && !S.students.some(s => norm(s.name) === norm(x))) { S.students.push({ id: uid(), name: x }); n++; } });
+  if (n) { save(); render(); } return n;
+}
+function inferEmc(name) { const n = norm(name); return /consigne/.test(n) ? "consignes" : /regle/.test(n) ? "regles" : ""; }
+function evalFromDraft() {
+  const grades = {}; Object.keys(draft.grades).forEach(k => { const v = draft.grades[k]; if (typeof v === "number" && stud(k)) grades[k] = v; });
+  return { id: draft.editId || uid(), date: draft.date || today(), subjectId: draft.subjectId, subId: draft.subId, compId: draft.compId || "", label: (draft.label || "").trim(), max: +draft.max || 10, grades };
+}
+const actions = {
+  print() { printMode = ""; buildSheet(); window.print(); },
+  parents() {
+    if (!S.students.length) return toast("Ajoute d'abord des élèves");
+    if (!S.items.vie.length) return toast("Ajoute d'abord des lignes de vie de classe");
+    printMode = "parents"; buildSheet(); window.print();
+  },
+  clearDraft() { draft = { subjectId: draft.subjectId, subId: "", compId: "", label: "", date: today(), max: 10, grades: {}, editId: null }; saveDraft(); render(); },
+  saveEval() {
+    const e = evalFromDraft();
+    if (!e.subjectId) return toast("Choisis une matière");
+    if (!Object.keys(e.grades).length) return toast("Saisis au moins une note");
+    const over = Object.keys(e.grades).find(k => e.grades[k] > e.max); if (over) return toast("Note supérieure au barème : " + stud(over).name);
+    const i = S.evals.findIndex(x => x.id === e.id); if (i >= 0) S.evals[i] = e; else S.evals.push(e);
+    save(); actions.clearDraft(); toast("Évaluation enregistrée ✓");
+  },
+  newWeek() {
+    if (!confirm("Fin de semaine : les compteurs de VIE DE CLASSE et de MATÉRIEL de la semaine sont ajoutés au cumul du trimestre, puis remis à zéro.\n\n(Les compteurs de sons et d'écriture ne sont pas touchés : ils se cumulent sur tout le trimestre.)\n\nContinuer ?")) return;
+    Object.keys(S.counts).forEach(sid => ["vie", "matos"].forEach(m => {
+      const w = (S.counts[sid] || {})[m]; if (!w) return;
+      const t = ((S.term[sid] = S.term[sid] || {})[m] = S.term[sid][m] || {});
+      Object.keys(w).forEach(it => { t[it] = (t[it] || 0) + w[it]; });
+      S.counts[sid][m] = {};
+    }));
+    save(); render(); toast("Semaine archivée — vie de classe et matériel remis à zéro ✓");
+  },
+  newTerm() {
+    if (!confirm("NOUVEAU TRIMESTRE\n\n• Une sauvegarde complète (JSON) est téléchargée d'abord.\n• Évaluations, compteurs, cumul et prêts sont remis à zéro.\n• Élèves, matières et lignes de compteurs sont conservés.\n\nContinuer ?")) return;
+    download("sauvegarde-fin-trimestre-" + today() + ".json", JSON.stringify(S, null, 2));
+    exportCsv();
+    setTimeout(() => { S.evals = []; S.counts = {}; S.term = {}; S.lent = {}; draft = { subjectId: "", subId: "", compId: "", label: "", date: today(), max: 10, grades: {}, editId: null }; saveDraft(); save(); render(); toast("Nouveau trimestre prêt ✓"); }, 900);
+  },
+  csv() { exportCsv(); },
+  json() { download("classe-ce1-" + today() + ".json", JSON.stringify(S, null, 2)); },
+  import() { $("#imp").click(); },
+  copySql() { (navigator.clipboard ? navigator.clipboard.writeText(SQL) : Promise.reject()).then(() => toast("Script copié ✓"), () => { const p = document.querySelector("pre.sql"); const r = document.createRange(); r.selectNodeContents(p); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast("Sélectionné : copie avec Ctrl+C"); }); },
+  async cfgSave() {
+    cfg = { url: $("#c-url").value.trim(), key: $("#c-key").value.trim(), code: $("#c-code").value.trim(), rev: cfg.code === $("#c-code").value.trim() ? cfg.rev : 0 };
+    if (!cfg.url || !cfg.key) return toast("URL et clé requises");
+    if (cfg.code.length < 8) return toast("Le code doit faire 8 caractères minimum");
+    saveCfg();
+    try {
+      const r = await rpc("classe_get", { p_code: cfg.code });
+      if (!r) { await push(false); toast("Cloud initialisé avec tes données ✓"); }
+      else if (!S.students.length && !S.evals.length) { adopt(r); toast("Données du cloud chargées ✓"); }
+      else { cfg.rev = cfg.rev || 0; dirty = true; conflict(r); }
+    } catch (e) { setSync("⚠ erreur", true); toast("Connexion impossible : " + e.message); }
+    render();
+  },
+  pull() { pull(true); },
+  cfgOff() { cfg = {}; saveCfg(); render(); toast("Synchronisation désactivée"); }
+};
+
+/* ---------- Événements ---------- */
+document.addEventListener("click", ev => {
+  const t = ev.target.closest("[data-go],[data-cat],[data-cv],[data-nav],[data-dec2],[data-decm2],[data-inc],[data-dec],[data-decm],[data-lend],[data-lend2],[data-inc2],[data-tbl],[data-nt],[data-edit],[data-deval],[data-an],[data-act],[data-ds],[data-di],[data-dsj],[data-dsb],[data-add],[data-addsb],[data-addcp],[data-dcp]");
+  if (!t) return; const d = t.dataset;
+  if (d.go) return go(d.go);
+  if (d.cat) { ccat.vie = d.cat; return render(); }
+  if (d.cv) { cview[page] = d.cv; return render(); }
+  if (d.nav) { const [m, k] = d.nav.split("|"), so = [...S.students].sort(byName), i = so.findIndex(s => s.id === sel[m]); sel[m] = so[(i + (+k) + so.length) % so.length].id; return render(); }
+  if (d.dec2) { ev.stopPropagation(); const [m, s, it] = d.dec2.split("|"); bump(s, m, it, -1); save(); return render(); }
+  if (d.decm2) { const [s, it] = d.decm2.split("|"); if (S.lent[s + "::" + it]) delete S.lent[s + "::" + it]; bump(s, "matos", it, -1); save(); return render(); }
+  if (d.dec) { ev.stopPropagation(); const [m, it] = d.dec.split("|"); bump(sel[m], m, it, -1); save(); return render(); }
+  if (d.inc) { const [m, it] = d.inc.split("|"); bump(sel[m], m, it, 1); save(); return render(); }
+  if (d.inc2) { const [m, s, it] = d.inc2.split("|"); bump(s, m, it, 1); save(); return render(); }
+  if (d.decm) { const k = sel.matos + "::" + d.decm; if (S.lent[k]) delete S.lent[k]; bump(sel.matos, "matos", d.decm, -1); save(); return render(); }
+  if (d.lend) { const k = sel.matos + "::" + d.lend; if (S.lent[k]) delete S.lent[k]; else { S.lent[k] = true; bump(sel.matos, "matos", d.lend, 1); } save(); return render(); }
+  if (d.lend2) { const [s, it] = d.lend2.split("|"), k = s + "::" + it; if (S.lent[k]) delete S.lent[k]; else { S.lent[k] = true; bump(s, "matos", it, 1); } save(); return render(); }
+  if (d.nt) { ntab = d.nt; return render(); }
+  if (d.an) { anSel = d.an; return render(); }
+  if (d.edit) { const e = S.evals.find(x => x.id === d.edit); if (e) { draft = { subjectId: e.subjectId, subId: e.subId, compId: e.compId || "", label: e.label, date: e.date, max: e.max, grades: { ...e.grades }, editId: e.id }; saveDraft(); ntab = "saisie"; render(); } return; }
+  if (d.deval) { if (confirm("Supprimer cette évaluation ?")) { S.evals = S.evals.filter(x => x.id !== d.deval); save(); render(); } return; }
+  if (d.act) return actions[d.act]();
+  if (d.ds) { const s = stud(d.ds); if (!confirm(`Supprimer ${s.name} ? Ses notes et compteurs seront supprimés.`)) return;
+    S.students = S.students.filter(x => x.id !== d.ds); delete S.counts[d.ds]; delete S.term[d.ds]; Object.keys(S.lent).forEach(k => { if (k.startsWith(d.ds + "::")) delete S.lent[k]; });
+    S.evals.forEach(e => delete e.grades[d.ds]); save(); return render(); }
+  if (d.di) { const [m, id] = d.di.split("|"); if (!confirm("Supprimer cette ligne et ses compteurs ?")) return;
+    S.items[m] = S.items[m].filter(i => i.id !== id);
+    [S.counts, S.term].forEach(o => Object.keys(o).forEach(s => o[s][m] && delete o[s][m][id]));
+    Object.keys(S.lent).forEach(k => { if (k.endsWith("::" + id)) delete S.lent[k]; }); save(); return render(); }
+  if (d.dsj) { if (!confirm("Supprimer cette matière ? Ses évaluations seront supprimées.")) return; S.subjects = S.subjects.filter(x => x.id !== d.dsj); S.evals = S.evals.filter(e => e.subjectId !== d.dsj); save(); return render(); }
+  if (d.dsb) { const [a, b] = d.dsb.split("|"); if (!confirm("Supprimer cette sous-matière ? Ses évaluations seront rattachées à la matière seule.")) return; const sj = subj(a); sj.subs = sj.subs.filter(x => x.id !== b); S.evals.forEach(e => { if (e.subId === b) e.subId = ""; }); save(); return render(); }
+  if (d.addcp) { const [a, b] = d.addcp.split("|"), sb = subOf(subj(a), b), i = $("#add-cp-" + b), v = i.value.trim(); if (!v) return; (sb.comps = sb.comps || []).push({ id: uid(), name: v }); save(); return render(); }
+  if (d.dcp) { const [a, b, c] = d.dcp.split("|"); if (!confirm("Supprimer cette compétence ? Les évaluations gardent leur intitulé.")) return; const sb = subOf(subj(a), b); sb.comps = sb.comps.filter(x => x.id !== c); S.evals.forEach(e => { if (e.compId === c) e.compId = ""; }); save(); return render(); }
+  if (d.addsb) { const i = $("#add-sb-" + d.addsb), v = i.value.trim(); if (!v) return; subj(d.addsb).subs.push({ id: uid(), name: v }); save(); return render(); }
+  if (d.add) {
+    if (d.add === "bulk") { const n = addStudents($("#bulk").value.split("\n")); return toast(n + " élève(s) ajouté(s)"); }
+    const i = $("#add-" + d.add), v = i.value.trim(); if (!v) return;
+    if (d.add === "student") { if (!addStudents([v])) toast("Déjà dans la liste"); return; }
+    if (d.add === "subject") S.subjects.push({ id: uid(), name: v, subs: [] });
+    else S.items[d.add].push(d.add === "vie" ? { id: uid(), name: v, emc: inferEmc(v), w: 1 } : { id: uid(), name: v });
+    save(); render(); setTimeout(() => { const n = $("#add-" + d.add); n && n.focus(); }, 30);
+  }
+});
+document.addEventListener("change", ev => {
+  const t = ev.target, d = t.dataset;
+  if (d.selst) { sel[d.selst] = t.value; return render(); }
+  if (d.selit) { citem[d.selit] = t.value; return render(); }
+  if (d.d) { draft[d.d] = d.d === "max" ? (+t.value || 10) : t.value; if (d.d === "subjectId") { draft.subId = ""; draft.compId = ""; } if (d.d === "subId") draft.compId = ""; saveDraft(); if (["subjectId", "subId", "max"].includes(d.d)) render(); return; }
+  if (d.g) { const v = t.value.replace(",", "."); if (v === "") delete draft.grades[d.g]; else draft.grades[d.g] = parseFloat(v); saveDraft(); const p = $("#gp-" + d.g); if (p) p.innerHTML = pill(on10(draft.grades[d.g], draft.max)); updDraftMean(); return; }
+  if (d.hf !== undefined) { histF = t.value; return render(); }
+  if (d.rn) { const s = stud(d.rn), v = t.value.trim(); if (v) { s.name = v; save(); } return render(); }
+  if (d.ri) { const [m, id] = d.ri.split("|"), it = S.items[m].find(i => i.id === id), v = t.value.trim(); if (v) { it.name = v; if (m === "vie" && !it.emc) it.emc = inferEmc(v); save(); } return render(); }
+  if (d.emc) { S.items.vie.find(i => i.id === d.emc).emc = t.value; save(); return; }
+  if (d.w) { S.items.vie.find(i => i.id === d.w).w = Math.max(0, parseFloat(t.value) || 0); save(); return; }
+  if (d.rsj) { const v = t.value.trim(); if (v) { subj(d.rsj).name = v; save(); } return render(); }
+  if (d.rcp) { const [a, b, c] = d.rcp.split("|"), v = t.value.trim(); if (v) { compOf(subOf(subj(a), b), c).name = v; save(); } return render(); }
+  if (d.rsb) { const [a, b] = d.rsb.split("|"), v = t.value.trim(); if (v) { subOf(subj(a), b).name = v; save(); } return render(); }
+  if (t.id === "imp") {
+    const f = t.files[0]; if (!f) return;
+    const r = new FileReader(); r.onload = () => {
+      try {
+        const d2 = JSON.parse(r.result); if (!d2 || !Array.isArray(d2.students) || !d2.items) throw 0;
+        if (!confirm("Importer cette sauvegarde ? Elle remplace les données actuelles (une copie de sécurité des données actuelles est téléchargée).")) return;
+        download("avant-import-" + today() + ".json", JSON.stringify(S, null, 2));
+        S = fix(d2); save(); render(); toast("Sauvegarde importée ✓");
+      } catch (e) { toast("Fichier non reconnu"); }
+    }; r.readAsText(f); t.value = "";
+  }
+});
+document.addEventListener("input", ev => {
+  const g = ev.target.dataset.g; if (g === undefined) return;
+  const v = ev.target.value.replace(",", "."); if (v === "") delete draft.grades[g]; else draft.grades[g] = parseFloat(v);
+  const p = $("#gp-" + g); if (p) p.innerHTML = pill(on10(draft.grades[g], draft.max)); updDraftMean();
+});
+
+render(); updDraftMean();
+if (cloudOn()) pull(false);
+</script>
+</body>
+</html>
